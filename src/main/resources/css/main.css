@@ -1,0 +1,13 @@
+.toggle-button:selected {
+    -fx-background-color: GOLD;
+    -fx-border-color: red;
+    -fx-border-width: 2px;
+    -fx-border-radius: 3px;
+}
+.button:pressed {
+    -fx-background-color: GOLD;
+    -fx-border-color: red;
+    -fx-border-width: 2px;
+    -fx-border-radius: 3px;
+    -fx-transition: background-color 0.5s;
+}

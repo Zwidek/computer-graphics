@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="453.0" prefWidth="707.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <ToggleButton fx:id="linia_button" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="linia">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font></ToggleButton>
+         <ToggleButton fx:id="prostokat_button" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="prostokąt">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font></ToggleButton>
+         <ToggleButton fx:id="okrag_button" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="okrąg">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font></ToggleButton>
+         <Label fx:id="dlugosc_label" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="długość" textAlignment="CENTER" textFill="#b7ff00" visible="false">
+            <opaqueInsets>
+               <Insets />
+            </opaqueInsets>
+            <VBox.margin>
+               <Insets top="40.0" />
+            </VBox.margin>
+            <font>
+               <Font name="System Bold Italic" size="12.0" />
+            </font>
+         </Label>
+         <TextField fx:id="dlugosc_text" visible="false" />
+         <Label fx:id="szerokosc_label" alignment="CENTER" layoutX="10.0" layoutY="89.0" prefHeight="27.0" prefWidth="100.0" text="szerokość" textFill="#b7ff00" visible="false">
+            <font>
+               <Font name="System Bold Italic" size="12.0" />
+            </font></Label>
+         <TextField fx:id="szerokosc_text" layoutX="10.0" layoutY="116.0" visible="false" />
+         <Label fx:id="promien_label" alignment="CENTER" layoutX="10.0" layoutY="142.0" prefHeight="27.0" prefWidth="100.0" text="promień" textFill="#b7ff00" visible="false">
+            <font>
+               <Font name="System Bold Italic" size="12.0" />
+            </font></Label>
+         <TextField fx:id="promien_text" layoutX="10.0" layoutY="169.0" visible="false" />
+         <Button fx:id="rysuj_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="rysuj" visible="false" />
+         <Button fx:id="rozmiar_button" mnemonicParsing="false" prefHeight="24.0" prefWidth="121.0" style="-fx-background-color: GOLD;" text="zapisz" visible="false" />
+      </VBox>
+   </left>
+   <center>
+      <Pane fx:id="pane" maxHeight="315.0" maxWidth="400.0" prefHeight="315.0" prefWidth="234.0">
+         <BorderPane.margin>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </BorderPane.margin>
+      </Pane>
+   </center>
+   <right>
+      <VBox prefHeight="431.0" prefWidth="172.0" BorderPane.alignment="CENTER">
+         <Label fx:id="cmyk_label" alignment="CENTER" layoutX="10.0" layoutY="89.0" prefHeight="27.0" prefWidth="204.0" text="CMYK" textFill="#b7ff00" visible="true">
+            <font>
+               <Font name="System Bold Italic" size="12.0" />
+            </font></Label>
+         <TextField fx:id="cmyk_text" visible="true" />
+         <Button fx:id="cmyk_button" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="187.0" style="-fx-background-color: GOLD;" text="Konwertuj" visible="true" />
+         <Label alignment="CENTER" layoutX="10.0" layoutY="36.0" prefHeight="27.0" prefWidth="220.0" text="RGB" textFill="#b7ff00" visible="true">
+            <font>
+               <Font name="System Bold Italic" size="12.0" />
+            </font>
+         </Label>
+         <TextField fx:id="rgb_text" layoutX="10.0" layoutY="116.0" visible="true" />
+         <Button fx:id="rgb_button" layoutX="10.0" layoutY="223.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="187.0" style="-fx-background-color: GOLD;" text="Konwertuj" visible="true" />
+         <Label alignment="CENTER" layoutX="10.0" layoutY="63.0" prefHeight="27.0" prefWidth="217.0" text="Paleta" textFill="#b7ff00" visible="true">
+            <font>
+               <Font name="System Bold Italic" size="12.0" />
+            </font>
+         </Label>
+         <ColorPicker fx:id="color_picker" prefHeight="26.0" prefWidth="177.0" />
+         <Label alignment="CENTER" layoutX="10.0" layoutY="116.0" prefHeight="27.0" prefWidth="228.0" text="Zmień" textFill="#b7ff00" visible="true">
+            <font>
+               <Font name="System Bold Italic" size="12.0" />
+            </font>
+         </Label>
+         <Button fx:id="paleta_button" mnemonicParsing="false" prefHeight="26.0" prefWidth="187.0" style="-fx-background-color: GOLD;" text="Zapisz" visible="true" />
+      </VBox>
+   </right>
+</BorderPane>
