@@ -37,7 +37,7 @@ public class second extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(first.class.getResource("second.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(second.class.getResource("second.fxml"));
         Parent root = getFilter(fxmlLoader);
 
         Scene scene = new Scene(root, 1200, 700);
