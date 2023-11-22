@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -18,14 +19,17 @@ import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class third extends Application {
 
     private Pane pane;
-    private Circle[] controlPoints = new Circle[100];
     private Path bezierPath;
     private VBox vBox;
+    private List<Circle> controlPoints = new ArrayList<>();
+    private Button button;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -44,6 +48,7 @@ public class third extends Application {
         BorderPane borderPane = (BorderPane) root.lookup("#border_pane");
         vBox = (VBox) root.lookup("#vbox");
         pane = (Pane) root.lookup("#pane");
+        button = (Button) root.lookup("#button");
 
         drawBezier();
         setupTextFieldEventHandlers();
@@ -54,60 +59,62 @@ public class third extends Application {
     private void drawBezier() {
         int numberOfControlPoints = 5;
 
-        // Dodaj pola tekstowe do VBox dla każdego punktu kontrolnego
+        // Add text fields to VBox for each control point
         for (int i = 0; i < numberOfControlPoints; i++) {
-            Label labelX = new Label();
             TextField textFieldX = new TextField();
-            Label labelY = new Label();
             TextField textFieldY = new TextField();
 
-            HBox pointHBox = new HBox(labelX, textFieldX, labelY, textFieldY);
+            HBox pointHBox = new HBox(textFieldX, textFieldY);
             vBox.getChildren().add(pointHBox);
         }
 
-        // Rysuj początkowe punkty kontrolne i zainicjuj obsługę zdarzeń myszy
-        controlPoints = new Circle[numberOfControlPoints];
+        button.setOnAction(event -> addNewPoint());
+
+        // Draw initial control points and initialize mouse event handling
+        controlPoints = new ArrayList<>();
         for (int i = 0; i < numberOfControlPoints; i++) {
             final int index = i;
 
-            // Ustaw domyślne wartości dla punktów kontrolnych
-            double defaultX = 10 + i * 30;
-            double defaultY = 10;
+            // Set default values for control points
+            double defaultX = 50 + i * 30;
+            double defaultY = 50;
 
-            controlPoints[i] = createControlPoint(defaultX, defaultY);
-            pane.getChildren().add(controlPoints[i]);
+            Circle controlPoint = createControlPoint(defaultX, defaultY);
+            pane.getChildren().add(controlPoint);
 
-            // Ustaw wartości początkowe w polach tekstowych
-            ((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(1)).setText(String.valueOf(defaultX));
-            ((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(3)).setText(String.valueOf(defaultY));
+            // Set initial values in text fields
+            ((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(0)).setText(String.valueOf(defaultX));
+            ((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(1)).setText(String.valueOf(defaultY));
 
-            controlPoints[i].setOnMouseDragged(event -> {
-                // Aktualizuj pozycję punktu kontrolnego po przeciągnięciu myszką
-                controlPoints[index].setCenterX(event.getX());
-                controlPoints[index].setCenterY(event.getY());
+            controlPoint.setOnMouseDragged(event -> {
+                // Update control point position after dragging
+                controlPoints.get(index).setCenterX(event.getX());
+                controlPoints.get(index).setCenterY(event.getY());
 
-                // Aktualizuj wartości w polach tekstowych
-                ((TextField) ((HBox) vBox.getChildren().get(index)).getChildren().get(1)).setText(String.valueOf(event.getX()));
-                ((TextField) ((HBox) vBox.getChildren().get(index)).getChildren().get(3)).setText(String.valueOf(event.getY()));
+                // Update values in text fields
+                ((TextField) ((HBox) vBox.getChildren().get(index)).getChildren().get(0)).setText(String.valueOf(event.getX()));
+                ((TextField) ((HBox) vBox.getChildren().get(index)).getChildren().get(1)).setText(String.valueOf(event.getY()));
 
-                // Przeliczaj i rysuj krzywą Béziera na nowo
+                // Recalculate and redraw Bézier curve
                 drawBezierCurve();
             });
+
+            controlPoints.add(controlPoint);
         }
 
         drawBezierCurve();
     }
 
     private void setupTextFieldEventHandlers() {
-        for (int i = 0; i < controlPoints.length; i++) {
-            TextField textFieldX = (TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(1);
-            TextField textFieldY = (TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(3);
+        for (int i = 0; i < controlPoints.size(); i++) {
+            TextField textFieldX = (TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(0);
+            TextField textFieldY = (TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(1);
 
             // Add event handler for Enter key press on X coordinate TextField
             int finalI = i;
             textFieldX.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
-                    updateControlPointAndRedraw(finalI);
+                    updateControlPointAndRedraw(finalI, textFieldX, textFieldY);
                 }
             });
 
@@ -115,20 +122,21 @@ public class third extends Application {
             int finalI1 = i;
             textFieldY.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
-                    updateControlPointAndRedraw(finalI1);
+                    updateControlPointAndRedraw(finalI1, textFieldX, textFieldY);
                 }
             });
         }
     }
-    private void updateControlPointAndRedraw(int index) {
-        double newX = Double.parseDouble(((TextField) ((HBox) vBox.getChildren().get(index)).getChildren().get(1)).getText());
-        double newY = Double.parseDouble(((TextField) ((HBox) vBox.getChildren().get(index)).getChildren().get(3)).getText());
 
-        // Update the control point's position
-        controlPoints[index].setCenterX(newX);
-        controlPoints[index].setCenterY(newY);
+    private void updateControlPointAndRedraw(int index, TextField textFieldX, TextField textFieldY) {
+        double newX = Double.parseDouble(textFieldX.getText());
+        double newY = Double.parseDouble(textFieldY.getText());
 
-        // Redraw the Bézier curve
+        // Update control point's position
+        controlPoints.get(index).setCenterX(newX);
+        controlPoints.get(index).setCenterY(newY);
+
+        // Redraw Bézier curve
         drawBezierCurve();
     }
 
@@ -139,14 +147,14 @@ public class third extends Application {
     }
 
     private void drawBezierCurve() {
-        int numberOfControlPoints = controlPoints.length;
+        int numberOfControlPoints = controlPoints.size();
 
         if (bezierPath != null) {
             pane.getChildren().remove(bezierPath);
         }
 
         bezierPath = new Path();
-        MoveTo moveTo = new MoveTo(controlPoints[0].getCenterX(), controlPoints[0].getCenterY());
+        MoveTo moveTo = new MoveTo(controlPoints.get(0).getCenterX(), controlPoints.get(0).getCenterY());
         bezierPath.getElements().add(moveTo);
 
         for (double t = 0; t <= 1; t += 0.01) {
@@ -158,32 +166,72 @@ public class third extends Application {
         pane.getChildren().add(bezierPath);
     }
 
-    private double deCasteljauX(double t, Circle[] points) {
-        double[] xValues = new double[points.length];
-        for (int i = 0; i < points.length; i++) {
-            xValues[i] = Double.parseDouble(((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(1)).getText());
+    private double deCasteljauX(double t, List<Circle> points) {
+        double[] xValues = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            xValues[i] = Double.parseDouble(((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(0)).getText());
         }
-        for (int j = 1; j < points.length; j++) {
-            for (int i = 0; i < points.length - j; i++) {
+        for (int j = 1; j < points.size(); j++) {
+            for (int i = 0; i < points.size() - j; i++) {
                 xValues[i] = (1 - t) * xValues[i] + t * xValues[i + 1];
             }
         }
         return xValues[0];
     }
 
-    private double deCasteljauY(double t, Circle[] points) {
-        double[] yValues = new double[points.length];
-        for (int i = 0; i < points.length; i++) {
-            yValues[i] = Double.parseDouble(((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(3)).getText());
+    private double deCasteljauY(double t, List<Circle> points) {
+        double[] yValues = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            yValues[i] = Double.parseDouble(((TextField) ((HBox) vBox.getChildren().get(i)).getChildren().get(1)).getText());
         }
-        for (int j = 1; j < points.length; j++) {
-            for (int i = 0; i < points.length - j; i++) {
+        for (int j = 1; j < points.size(); j++) {
+            for (int i = 0; i < points.size() - j; i++) {
                 yValues[i] = (1 - t) * yValues[i] + t * yValues[i + 1];
             }
         }
         return yValues[0];
     }
 
+    private void addNewPoint() {
+        TextField textFieldX = new TextField();
+        TextField textFieldY = new TextField();
+
+        HBox pointHBox = new HBox(textFieldX, textFieldY);
+        vBox.getChildren().add(pointHBox);
+
+        // Set event handlers for new text fields
+        int newIndex = controlPoints.size();
+        textFieldX.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                updateControlPointAndRedraw(newIndex, textFieldX, textFieldY);
+            }
+        });
+
+        textFieldY.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                updateControlPointAndRedraw(newIndex, textFieldX, textFieldY);
+            }
+        });
+
+        // Create a new control point for the added TextField and add it to the list
+        Circle newControlPoint = createControlPoint(30, 30); // Set initial values or update as needed
+        controlPoints.add(newControlPoint);
+        pane.getChildren().add(newControlPoint);
+
+        // Set up mouse event handler for the new control point
+        newControlPoint.setOnMouseDragged(event -> {
+            // Update control point position after dragging
+            controlPoints.get(newIndex).setCenterX(event.getX());
+            controlPoints.get(newIndex).setCenterY(event.getY());
+
+            // Update values in text fields
+            textFieldX.setText(String.valueOf(event.getX()));
+            textFieldY.setText(String.valueOf(event.getY()));
+
+            // Recalculate and redraw Bézier curve
+            drawBezierCurve();
+        });
+    }
 
     public static void main(String[] args) {
         launch(args);
