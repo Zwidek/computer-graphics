@@ -15,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
@@ -22,6 +23,7 @@ import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.QuadCurveTo;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -31,9 +33,11 @@ import java.util.Objects;
 public class third extends Application {
 
     private static Button rysuj_button;
-    private static TextField rysuj_textfield;
-    private static Label rysuj_label;
     private static BorderPane borderPane;
+    private static Pane pane;
+    private static VBox vBox;
+    private Circle[] controlPoints = new Circle[100];
+    private Path bezierPath;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -49,106 +53,86 @@ public class third extends Application {
 
     private Parent brezier(FXMLLoader fxmlLoader) throws IOException {
         Parent root = fxmlLoader.load();
-        rysuj_button = (Button) root.lookup("#rysuj_button");
-        rysuj_textfield = (TextField) root.lookup("#rysuj_textfield");
-        rysuj_label = (Label) root.lookup("#rysuj_label");
         borderPane = (BorderPane) root.lookup("#border_pane");
+        pane = (Pane) root.lookup("#pane");
 
-
-        rysuj_button.setOnAction(actionEvent -> {
-            if (rysuj_textfield.getCharacters().isEmpty() || !rysuj_textfield.getCharacters().toString().matches("\\d+")) {
-                return;
-            }
-            drawBrezier(rysuj_textfield.getCharacters().toString());
-        });
+        drawBezier();
 
         return root;
     }
 
-    private void drawBrezier(String brezierDegree) {
-        rysuj_label.setVisible(false);
-        rysuj_textfield.setVisible(false);
-        rysuj_button.setVisible(false);
+    private void drawBezier() {
+        double x0 = 10, y0 = 10;
+        double x1 = 30, y1 = 30;
+        double x2 = 50, y2 = 50;
+        double x3 = 100, y3 = 100;
+        double x4 = 150, y4 = 50;
+        int numberOfControlPoints = 5;
 
-        int degree = Integer.parseInt(brezierDegree);
+        controlPoints = new Circle[numberOfControlPoints];
+        for (int i = 0; i < numberOfControlPoints; i++) {
+            final int index = i;
+            controlPoints[i] = createControlPoint(x0 + i * 30, y0);
+            pane.getChildren().add(controlPoints[i]);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Punkty kontrolne i rozmiar");
-        dialog.setHeaderText("Wprowadź punkty");
-
-        TextField[][] textFields = new TextField[degree][2];
-        for (int i = 0; i < degree - 1; i++) {
-            TextField xTextField = new TextField();
-            TextField yTextField = new TextField();
-
-            textFields[i][0] = xTextField;
-            textFields[i][1] = yTextField;
-
-            grid.add(new Label("x" + (i + 1) + ":"), 0, i);
-            grid.add(xTextField, 1, i);
-            grid.add(new Label("y" + (i + 1) + ":"), 2, i);
-            grid.add(yTextField, 3, i);
+            controlPoints[i].setOnMouseDragged(event -> {
+                controlPoints[index].setCenterX(event.getX());
+                controlPoints[index].setCenterY(event.getY());
+                drawBezierCurve();
+            });
         }
-        dialog.getDialogPane().setContent(grid);
-
-        dialog.showAndWait();
-
-        Line xAxis = new Line(0, 200, 400, 200);
-        Line yAxis = new Line(200, 0, 200, 400);
-
-        Pane pane = new Pane();
-        pane.getChildren().add(xAxis);
-        pane.getChildren().add(yAxis);
-
-        Path bezierPath = new Path();
-        bezierPath.setStroke(Color.GOLD);
-        bezierPath.setStrokeWidth(4);
-
-        bezierPath.getElements().add(new MoveTo(0, 0));
-
-        double[][] controlPoints = new double[degree][2];
-        for (int i = 0; i < degree - 1; i++) {
-            controlPoints[i][0] = Double.parseDouble(textFields[i][0].getText());
-            controlPoints[i][1] = Double.parseDouble(textFields[i][1].getText());
-        }
-
-        MoveTo moveTo = new MoveTo();
-        moveTo.setX(0.0f);
-        moveTo.setY(0.0f);
-
-        CubicCurveTo cubicTo = new CubicCurveTo();
-        cubicTo.setControlX1(0);
-        cubicTo.setControlY1(0);
-        cubicTo.setX(0);
-        cubicTo.setY(0);
-
-        bezierPath.getElements().add(moveTo);
-        bezierPath.getElements().add(cubicTo);
-
-//        int tmp = 1;
-//        for (int i = 0; i < degree - 1; i++) {
-//            CubicCurveTo cubicCurveTo = new CubicCurveTo();
-//            cubicCurveTo.setControlX1(controlPoints[i][0]);
-//            cubicCurveTo.setControlY1(controlPoints[i][1]);
-//            cubicCurveTo.setControlX2(controlPoints[tmp][0]);
-//            cubicCurveTo.setControlY2(controlPoints[tmp][1]);
-//            cubicCurveTo.setX(200);
-//            cubicCurveTo.setY(0);
-//            bezierPath.getElements().add(cubicCurveTo);
-//            tmp++;
-//        }
-
-        pane.getChildren().add(bezierPath);
-
-        borderPane.setCenter(pane);
+        drawBezierCurve();
     }
 
+    private Circle createControlPoint(double x, double y) {
+        Circle circle = new Circle(x, y, 5);
+        circle.setFill(Color.BLUEVIOLET);
+        return circle;
+    }
+
+    private void drawBezierCurve() {
+        if (bezierPath != null) {
+            pane.getChildren().remove(bezierPath);
+        }
+
+        bezierPath = new Path();
+        MoveTo moveTo = new MoveTo(controlPoints[0].getCenterX(), controlPoints[0].getCenterY());
+        bezierPath.getElements().add(moveTo);
+
+        for (double t = 0; t <= 1; t += 0.01) {
+            double x = deCasteljauX(t, controlPoints);
+            double y = deCasteljauY(t, controlPoints);
+            bezierPath.getElements().add(new javafx.scene.shape.LineTo(x, y));
+        }
+
+        pane.getChildren().add(bezierPath);
+    }
+
+    private double deCasteljauX(double t, Circle[] points) {
+        double[] xValues = new double[points.length];
+        for (int i = 0; i < points.length; i++) {
+            xValues[i] = points[i].getCenterX();
+        }
+        for (int j = 1; j < points.length; j++) {
+            for (int i = 0; i < points.length - j; i++) {
+                xValues[i] = (1 - t) * xValues[i] + t * xValues[i + 1];
+            }
+        }
+        return xValues[0];
+    }
+
+    private double deCasteljauY(double t, Circle[] points) {
+        double[] yValues = new double[points.length];
+        for (int i = 0; i < points.length; i++) {
+            yValues[i] = points[i].getCenterY();
+        }
+        for (int j = 1; j < points.length; j++) {
+            for (int i = 0; i < points.length - j; i++) {
+                yValues[i] = (1 - t) * yValues[i] + t * yValues[i + 1];
+            }
+        }
+        return yValues[0];
+    }
 
     public static void main(String[] args) {
         launch(args);
