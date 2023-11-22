@@ -7,6 +7,6 @@
       <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
    <left>
-      <VBox fx:id="vbox" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+      <VBox fx:id="vbox" prefHeight="400.0" prefWidth="86.0" BorderPane.alignment="CENTER" />
    </left>
 </BorderPane>
