@@ -39,6 +39,7 @@ public class fourth extends Application {
     private static TextField wektorY;
     private static Button wektorXButton;
     private static Button wektorYButton;
+
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(fourth.class.getResource("fourth.fxml"));
@@ -59,11 +60,64 @@ public class fourth extends Application {
         vBox2 = (VBox) root.lookup("#vbox2");
         wektorX = (TextField) root.lookup("#wektorX_textfield");
         wektorY = (TextField) root.lookup("#wektorY_textfield");
-        wektorXButton = (Button) root.lookup("wektorX_button");
-        wektorYButton = (Button) root.lookup("wektorY_button");
+        wektorXButton = (Button) root.lookup("#wektorX_button");
+        wektorYButton = (Button) root.lookup("#wektorY_button");
 
         drawShapes(pane);
+        setupEventHandlers();
         return root;
+    }
+
+    private void setupEventHandlers() {
+        wektorXButton.setOnAction(event -> {
+            try {
+                double deltaX = Double.parseDouble(wektorX.getText());
+                for (Node node : pane.getChildren()) {
+                    if (node instanceof Polygon) {
+                        Polygon polygon = (Polygon) node;
+                        polygon.setLayoutX(polygon.getLayoutX() + deltaX);
+                    } else if (node instanceof Circle) {
+                        Circle point = (Circle) node;
+                        point.setCenterX(point.getCenterX() + deltaX);
+                    }
+                }
+                updateVBoxInfo(getAllPoints());
+            } catch (NumberFormatException e) {
+                System.out.println("Bledna liczba");
+            }
+            updateVBoxInfo(getAllPoints());
+        });
+
+        wektorYButton.setOnAction(event -> {
+            try {
+                double deltaY = Double.parseDouble(wektorY.getText());
+                for (Node node : pane.getChildren()) {
+                    if (node instanceof Polygon) {
+                        Polygon polygon = (Polygon) node;
+                        polygon.setLayoutY(polygon.getLayoutY() + deltaY);
+                    } else if (node instanceof Circle) {
+                        Circle point = (Circle) node;
+                        point.setCenterY(point.getCenterY() + deltaY);
+                    }
+                }
+                updateVBoxInfo(getAllPoints());
+            } catch (NumberFormatException e) {
+                System.out.println("Błędna liczba");
+            }
+            updateVBoxInfo(getAllPoints());
+        });
+    }
+
+    private List<Circle> getAllPoints() {
+        List<Circle> allPoints = new ArrayList<>();
+
+        for (Node node : pane.getChildren()) {
+            if (node instanceof Circle) {
+                allPoints.add((Circle) node);
+            }
+        }
+
+        return allPoints;
     }
 
     private void drawShapes(Pane pane) {
@@ -86,7 +140,7 @@ public class fourth extends Application {
                 pane.getChildren().addAll(closingLine);
 
                 Polygon polygon = new Polygon();
-                List<Circle> clonedPoints = new ArrayList<>(); // Lista punktów do wielokąta
+                List<Circle> clonedPoints = new ArrayList<>();
                 for (Circle point : points) {
                     polygon.getPoints().addAll(point.getCenterX(), point.getCenterY());
                     Circle clonedPoint = new Circle(point.getCenterX(), point.getCenterY(), 3);
@@ -95,7 +149,7 @@ public class fourth extends Application {
 
                 pane.getChildren().add(polygon);
                 polygons.add(polygon);
-                setPolygonDraggable(polygon, clonedPoints); // Ustawianie obsługi przesunięcia dla nowego polygonu i jego punktów
+                setPolygonDraggable(polygon, clonedPoints);
 
                 // Usunięcie punktów i linii
                 pane.getChildren().removeAll(points);
@@ -118,6 +172,7 @@ public class fourth extends Application {
             }
         });
     }
+
     private void setPolygonDraggable(Polygon polygon, List<Circle> points) {
         AtomicReference<Double> startAngle = new AtomicReference<>(0.0);
         AtomicBoolean ctrlPressed = new AtomicBoolean(false);
@@ -139,7 +194,6 @@ public class fourth extends Application {
                 double mouseY = event.getSceneY();
                 polygon.setUserData(new double[]{mouseX, mouseY});
 
-                // Dodaj kod do aktualizacji informacji w VBox
                 updateVBoxInfo(points);
             }
         });
@@ -177,13 +231,11 @@ public class fourth extends Application {
 
                 polygon.setUserData(new double[]{mouseX, mouseY});
 
-                // Aktualizacja pozycji punktów
                 for (Circle point : points) {
                     point.setCenterX(point.getCenterX() + deltaX);
                     point.setCenterY(point.getCenterY() + deltaY);
                 }
 
-                // Dodaj kod do aktualizacji informacji w VBox
                 updateVBoxInfo(points);
             }
         });
@@ -194,9 +246,8 @@ public class fourth extends Application {
         });
     }
 
-    // Dodana metoda do aktualizacji informacji w VBox
     private void updateVBoxInfo(List<Circle> points) {
-        vBox.getChildren().clear(); // Wyczyszczenie poprzednich informacji
+        vBox.getChildren().clear();
 
         for (Circle point : points) {
             double x = point.getCenterX();
@@ -205,31 +256,28 @@ public class fourth extends Application {
             HBox hbox = new HBox();
 
             TextField xTextField = new TextField(String.valueOf(x));
-            xTextField.setPrefWidth(50); // Preferowany rozmiar pola tekstowego X
+            xTextField.setPrefWidth(50);
             xTextField.setOnAction(e -> {
                 try {
                     double newX = Double.parseDouble(xTextField.getText());
                     point.setCenterX(newX);
-                    updateVBoxInfo(points); // Aktualizuj VBox po zmianie
+                    updateVBoxInfo(points);
                 } catch (NumberFormatException ex) {
-                    // Obsłuż wyjątek, np. nieprawidłowy format liczby
-                    xTextField.setText(String.valueOf(point.getCenterX())); // Przywróć poprzednią wartość
+                    xTextField.setText(String.valueOf(point.getCenterX()));
                 }
             });
 
             TextField yTextField = new TextField(String.valueOf(y));
-            yTextField.setPrefWidth(50); // Preferowany rozmiar pola tekstowego Y
+            yTextField.setPrefWidth(50);
             yTextField.setOnAction(e -> {
                 try {
                     double newY = Double.parseDouble(yTextField.getText());
                     point.setCenterY(newY);
-                    updateVBoxInfo(points); // Aktualizuj VBox po zmianie
+                    updateVBoxInfo(points);
                 } catch (NumberFormatException ex) {
-                    // Obsłuż wyjątek, np. nieprawidłowy format liczby
-                    yTextField.setText(String.valueOf(point.getCenterY())); // Przywróć poprzednią wartość
+                    yTextField.setText(String.valueOf(point.getCenterY()));
                 }
             });
-
             hbox.getChildren().addAll(xTextField, yTextField);
             vBox.getChildren().add(hbox);
         }
