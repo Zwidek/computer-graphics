@@ -2,15 +2,11 @@ package com.zwidek.school_graphic;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -35,19 +31,23 @@ public class fourth extends Application {
     private static Pane pane;
     private static VBox vBox;
     private static VBox vBox2;
-    private static TextField wektorX;
-    private static TextField wektorY;
-    private static TextField obrot;
+    private static TextField wektorXTextfield;
+    private static TextField wektorYTextfield;
+    private static TextField obrotTextfield;
+    private static TextField szerokoscTextfield;
+    private static TextField wysokoscTextfield;
     private static Button wektorXButton;
     private static Button wektorYButton;
     private static Button obrotButton;
+    private static Button szerokoscButton;
+    private static Button wysokoscButton;
 
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(fourth.class.getResource("fourth.fxml"));
         Parent root = draw(fxmlLoader);
 
-        Scene scene = new Scene(root, 750, 400);
+        Scene scene = new Scene(root, 750, 600);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/main.css")).toExternalForm());
         stage.setTitle("Hello!");
         stage.setScene(scene);
@@ -60,12 +60,16 @@ public class fourth extends Application {
         pane = (Pane) root.lookup("#pane");
         vBox = (VBox) root.lookup("#vbox");
         vBox2 = (VBox) root.lookup("#vbox2");
-        wektorX = (TextField) root.lookup("#wektorX_textfield");
-        wektorY = (TextField) root.lookup("#wektorY_textfield");
+        wektorXTextfield = (TextField) root.lookup("#wektorX_textfield");
+        wektorYTextfield = (TextField) root.lookup("#wektorY_textfield");
         wektorXButton = (Button) root.lookup("#wektorX_button");
         wektorYButton = (Button) root.lookup("#wektorY_button");
-        obrot = (TextField) root.lookup("#obrot_textfield");
+        obrotTextfield = (TextField) root.lookup("#obrot_textfield");
+        wysokoscTextfield = (TextField) root.lookup("#wysokosc_textfield");
+        szerokoscTextfield = (TextField) root.lookup("#szerokosc_textfield");
         obrotButton = (Button) root.lookup("#obrot_button");
+        wysokoscButton = (Button) root.lookup("#wysokosc_button");
+        szerokoscButton = (Button) root.lookup("#szerokosc_button");
 
         drawShapes(pane);
         setupEventHandlers();
@@ -75,9 +79,7 @@ public class fourth extends Application {
     private void setupEventHandlers() {
         wektorXButton.setOnAction(event -> {
             try {
-                double deltaX = Double.parseDouble(wektorX.getText());
-
-                // Przesuń wszystkie polygony i ich punkty X o wartość deltaX
+                double deltaX = Double.parseDouble(wektorXTextfield.getText());
                 for (Node node : pane.getChildren()) {
                     if (node instanceof Polygon) {
                         Polygon polygon = (Polygon) node;
@@ -87,23 +89,16 @@ public class fourth extends Application {
                         point.setCenterX(point.getCenterX() + deltaX);
                     }
                 }
-
-                // Aktualizuj informacje w VBox
                 updateVBoxInfo(getAllPoints());
             } catch (NumberFormatException e) {
-                // Obsłuż wyjątek, np. nieprawidłowy format liczby
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
-
-            // Dodaj to wywołanie, aby zaktualizować VBox po przesunięciu polygony
             updateVBoxInfo(getAllPoints());
         });
 
         wektorYButton.setOnAction(event -> {
             try {
-                double deltaY = Double.parseDouble(wektorY.getText());
-
-                // Przesuń wszystkie polygony i ich punkty Y o wartość deltaY
+                double deltaY = Double.parseDouble(wektorYTextfield.getText());
                 for (Node node : pane.getChildren()) {
                     if (node instanceof Polygon) {
                         Polygon polygon = (Polygon) node;
@@ -113,38 +108,59 @@ public class fourth extends Application {
                         point.setCenterY(point.getCenterY() + deltaY);
                     }
                 }
-
-                // Aktualizuj informacje w VBox
                 updateVBoxInfo(getAllPoints());
             } catch (NumberFormatException e) {
-                // Obsłuż wyjątek, np. nieprawidłowy format liczby
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
-
-            // Dodaj to wywołanie, aby zaktualizować VBox po przesunięciu polygony
             updateVBoxInfo(getAllPoints());
         });
 
         obrotButton.setOnAction(event -> {
             try {
-                double rotationAngle = Double.parseDouble(obrot.getText());
-
-                // Obróć wszystkie polygony o wartość rotationAngle
+                double rotationAngle = Double.parseDouble(obrotTextfield.getText());
                 for (Node node : pane.getChildren()) {
                     if (node instanceof Polygon) {
                         Polygon polygon = (Polygon) node;
                         polygon.setRotate(polygon.getRotate() + rotationAngle);
                     }
                 }
-
-                // Aktualizuj informacje w VBox
                 updateVBoxInfo(getAllPoints());
             } catch (NumberFormatException e) {
-                // Obsłuż wyjątek, np. nieprawidłowy format liczby
-                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
+            updateVBoxInfo(getAllPoints());
+        });
+
+        szerokoscButton.setOnAction(event -> {
+            try {
+                double szerokoscDelta = Double.parseDouble(szerokoscTextfield.getText());
+                for (Node node : pane.getChildren()) {
+                    if (node instanceof Polygon) {
+                        Polygon polygon = (Polygon) node;
+                        polygon.setScaleX(polygon.getScaleX() + szerokoscDelta);
+                    }
+                }
+                updateVBoxInfo(getAllPoints());
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
+            }
+            updateVBoxInfo(getAllPoints());
+        });
+
+        wysokoscButton.setOnAction(event -> {
+            try {
+                double wysokoscDelta = Double.parseDouble(wysokoscTextfield.getText());
+                for (Node node : pane.getChildren()) {
+                    if (node instanceof Polygon) {
+                        Polygon polygon = (Polygon) node;
+                        polygon.setScaleY(polygon.getScaleY() + wysokoscDelta);
+                    }
+                }
+                updateVBoxInfo(getAllPoints());
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
             }
 
-            // Dodaj to wywołanie, aby zaktualizować VBox po obróceniu polygony
             updateVBoxInfo(getAllPoints());
         });
     }
@@ -157,7 +173,6 @@ public class fourth extends Application {
                 allPoints.add((Circle) node);
             }
         }
-
         return allPoints;
     }
 
@@ -192,7 +207,6 @@ public class fourth extends Application {
                 polygons.add(polygon);
                 setPolygonDraggable(polygon, clonedPoints);
 
-                // Usunięcie punktów i linii
                 pane.getChildren().removeAll(points);
                 pane.getChildren().removeAll(lines);
                 points.clear();
@@ -280,7 +294,6 @@ public class fourth extends Application {
                 updateVBoxInfo(points);
             }
         });
-
         polygon.setOnMouseReleased(event -> {
             polygon.getParent().setMouseTransparent(false);
             ctrlPressed.set(false);
