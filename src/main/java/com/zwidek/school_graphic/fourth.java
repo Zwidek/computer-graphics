@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -13,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -32,6 +34,11 @@ public class fourth extends Application {
     private static BorderPane borderPane;
     private static Pane pane;
     private static VBox vBox;
+    private static VBox vBox2;
+    private static TextField wektorX;
+    private static TextField wektorY;
+    private static Button wektorXButton;
+    private static Button wektorYButton;
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(fourth.class.getResource("fourth.fxml"));
@@ -49,6 +56,11 @@ public class fourth extends Application {
         borderPane = (BorderPane) root.lookup("#border_pane");
         pane = (Pane) root.lookup("#pane");
         vBox = (VBox) root.lookup("#vbox");
+        vBox2 = (VBox) root.lookup("#vbox2");
+        wektorX = (TextField) root.lookup("#wektorX_textfield");
+        wektorY = (TextField) root.lookup("#wektorY_textfield");
+        wektorXButton = (Button) root.lookup("wektorX_button");
+        wektorYButton = (Button) root.lookup("wektorY_button");
 
         drawShapes(pane);
         return root;
@@ -126,6 +138,9 @@ public class fourth extends Application {
                 double mouseX = event.getSceneX();
                 double mouseY = event.getSceneY();
                 polygon.setUserData(new double[]{mouseX, mouseY});
+
+                // Dodaj kod do aktualizacji informacji w VBox
+                updateVBoxInfo(points);
             }
         });
 
@@ -141,9 +156,6 @@ public class fourth extends Application {
 
                 double deltaX = mouseX - lastMousePos[0];
                 double deltaY = mouseY - lastMousePos[1];
-
-                double pivotX = polygon.getBoundsInLocal().getWidth() / 2 + polygon.getBoundsInParent().getMinX();
-                double pivotY = polygon.getBoundsInLocal().getHeight() / 2 + polygon.getBoundsInParent().getMinY();
 
                 double factorX = deltaX / polygon.getBoundsInLocal().getWidth();
                 double factorY = deltaY / polygon.getBoundsInLocal().getHeight();
@@ -170,6 +182,9 @@ public class fourth extends Application {
                     point.setCenterX(point.getCenterX() + deltaX);
                     point.setCenterY(point.getCenterY() + deltaY);
                 }
+
+                // Dodaj kod do aktualizacji informacji w VBox
+                updateVBoxInfo(points);
             }
         });
 
@@ -177,6 +192,47 @@ public class fourth extends Application {
             polygon.getParent().setMouseTransparent(false);
             ctrlPressed.set(false);
         });
+    }
+
+    // Dodana metoda do aktualizacji informacji w VBox
+    private void updateVBoxInfo(List<Circle> points) {
+        vBox.getChildren().clear(); // Wyczyszczenie poprzednich informacji
+
+        for (Circle point : points) {
+            double x = point.getCenterX();
+            double y = point.getCenterY();
+
+            HBox hbox = new HBox();
+
+            TextField xTextField = new TextField(String.valueOf(x));
+            xTextField.setPrefWidth(50); // Preferowany rozmiar pola tekstowego X
+            xTextField.setOnAction(e -> {
+                try {
+                    double newX = Double.parseDouble(xTextField.getText());
+                    point.setCenterX(newX);
+                    updateVBoxInfo(points); // Aktualizuj VBox po zmianie
+                } catch (NumberFormatException ex) {
+                    // Obsłuż wyjątek, np. nieprawidłowy format liczby
+                    xTextField.setText(String.valueOf(point.getCenterX())); // Przywróć poprzednią wartość
+                }
+            });
+
+            TextField yTextField = new TextField(String.valueOf(y));
+            yTextField.setPrefWidth(50); // Preferowany rozmiar pola tekstowego Y
+            yTextField.setOnAction(e -> {
+                try {
+                    double newY = Double.parseDouble(yTextField.getText());
+                    point.setCenterY(newY);
+                    updateVBoxInfo(points); // Aktualizuj VBox po zmianie
+                } catch (NumberFormatException ex) {
+                    // Obsłuż wyjątek, np. nieprawidłowy format liczby
+                    yTextField.setText(String.valueOf(point.getCenterY())); // Przywróć poprzednią wartość
+                }
+            });
+
+            hbox.getChildren().addAll(xTextField, yTextField);
+            vBox.getChildren().add(hbox);
+        }
     }
 
 
