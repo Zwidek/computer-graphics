@@ -2,45 +2,40 @@ package com.zwidek.school_graphic;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class fourth extends Application {
-    private static Label dlugoscLabel;
-    private static TextField dlugoscTextField;
-    private static Label szerokoscLabel;
-    private static TextField szerokoscTextField;
-    private static Label promienLabel;
-    private static TextField srednicaTextField;
-    private static ToggleButton liniaButton;
-    private static ToggleButton prostokatButton;
-    private static ToggleButton okragButton;
-    private static Button zmienRozmiarButton;
-    private static TextField yTextField;
-    private static TextField xTextField;
-    private static Color color = Color.RED;
-
+    private static BorderPane borderPane;
+    private static Pane pane;
+    private static VBox vBox;
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(fourth.class.getResource("fourth.fxml"));
-        Parent root = drawShape(fxmlLoader);
+        Parent root = draw(fxmlLoader);
 
         Scene scene = new Scene(root, 750, 400);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/main.css")).toExternalForm());
@@ -49,287 +44,143 @@ public class fourth extends Application {
         stage.show();
     }
 
-    private static Parent drawShape(FXMLLoader fxmlLoader) throws IOException {
+    private Parent draw(FXMLLoader fxmlLoader) throws IOException {
         Parent root = fxmlLoader.load();
+        borderPane = (BorderPane) root.lookup("#border_pane");
+        pane = (Pane) root.lookup("#pane");
+        vBox = (VBox) root.lookup("#vbox");
 
-        Button rysujButton = (Button) root.lookup("#rysuj_button");
-        zmienRozmiarButton = (Button) root.lookup("#rozmiar_button");
-
-        dlugoscLabel = (Label) root.lookup("#dlugosc_label");
-        dlugoscTextField = (TextField) root.lookup("#dlugosc_text");
-
-        szerokoscLabel = (Label) root.lookup("#szerokosc_label");
-        szerokoscTextField = (TextField) root.lookup("#szerokosc_text");
-
-        promienLabel = (Label) root.lookup("#promien_label");
-        srednicaTextField = (TextField) root.lookup("#promien_text");
-
-        liniaButton = (ToggleButton) root.lookup("#linia_button");
-        prostokatButton = (ToggleButton) root.lookup("#prostokat_button");
-        okragButton = (ToggleButton) root.lookup("#okrag_button");
-
-        xTextField = (TextField) root.lookup("#x_textfield");
-        yTextField = (TextField) root.lookup("#y_textfield");
-        Button xButton = (Button) root.lookup("#x_button");
-        Button yButton = (Button) root.lookup("#y_button");
-
-        liniaButton.setOnAction(event -> {
-            dlugoscLabel.setVisible(true);
-            dlugoscTextField.setVisible(true);
-            dlugoscTextField.setText(String.valueOf(0));
-
-            szerokoscLabel.setVisible(false);
-            szerokoscTextField.setVisible(false);
-
-            promienLabel.setVisible(false);
-            srednicaTextField.setVisible(false);
-
-            prostokatButton.setSelected(false);
-            okragButton.setSelected(false);
-
-            rysujButton.setVisible(true);
-        });
-
-        prostokatButton.setOnAction(event -> {
-            dlugoscLabel.setVisible(true);
-            dlugoscTextField.setVisible(true);
-            dlugoscTextField.setText(String.valueOf(0));
-
-            szerokoscLabel.setVisible(true);
-            szerokoscTextField.setVisible(true);
-            szerokoscTextField.setText(String.valueOf(0));
-
-            promienLabel.setVisible(false);
-            srednicaTextField.setVisible(false);
-
-            liniaButton.setSelected(false);
-            okragButton.setSelected(false);
-
-            rysujButton.setVisible(true);
-        });
-
-        okragButton.setOnAction(event -> {
-            dlugoscLabel.setVisible(false);
-            dlugoscTextField.setVisible(false);
-
-            szerokoscLabel.setVisible(false);
-            szerokoscTextField.setVisible(false);
-
-            promienLabel.setVisible(true);
-            srednicaTextField.setVisible(true);
-            srednicaTextField.setText(String.valueOf(0));
-
-            liniaButton.setSelected(false);
-            prostokatButton.setSelected(false);
-
-            rysujButton.setVisible(true);
-        });
-
-        Pane pane = (Pane) root.lookup("#pane");
-        AtomicReference<Double> dlugosc = new AtomicReference<>((double) 0);
-        AtomicReference<Double> szerokosc = new AtomicReference<>((double) 0);
-        AtomicReference<Double> srednica = new AtomicReference<>((double) 0);
-
-        xButton.setOnAction(event -> xButtonAction());
-        yButton.setOnAction(event -> yButtonAction());
-
-        rysujButton.setOnAction(actionEvent -> {
-            if (prostokatButton.isSelected()) {
-                dlugosc.set(Double.valueOf(dlugoscTextField.getText()));
-                szerokosc.set(Double.valueOf(szerokoscTextField.getText()));
-                Rectangle rectangle = new Rectangle(100, -50, dlugosc.get(), szerokosc.get());
-                rectangle.setStroke(color);
-                pane.getChildren().add(rectangle);
-                setMouseEvents(rectangle);
-            } else if (liniaButton.isSelected()) {
-                dlugosc.set(Double.valueOf(dlugoscTextField.getText()));
-                Line line = new Line(0, 0, dlugosc.get(), 0);
-                line.setStroke(color);
-                line.setStrokeWidth(3.0);
-                pane.getChildren().add(line);
-                setMouseEvents(line);
-            } else if (okragButton.isSelected()) {
-                srednica.set(Double.valueOf(srednicaTextField.getText()));
-                Circle circle = new Circle(150, 0, srednica.get());
-                circle.setStroke(color);
-                pane.getChildren().add(circle);
-                setMouseEvents(circle);
-            }
-            prostokatButton.setSelected(false);
-            okragButton.setSelected(false);
-            liniaButton.setSelected(false);
-        });
-
-        pane.setOnMousePressed(event -> {
-            if (prostokatButton.isSelected()) {
-                Rectangle rectangle = new Rectangle(event.getX(), event.getY(), 5, 5);
-                rectangle.setStroke(color);
-                pane.getChildren().add(rectangle);
-                setMouseEvents(rectangle);
-            } else if (liniaButton.isSelected()) {
-                Line line = new Line(event.getX(), event.getY(), event.getX() + 5, event.getY());
-                line.setStroke(color);
-                line.setStrokeWidth(3.0);
-                pane.getChildren().add(line);
-                setMouseEvents(line);
-            } else if (okragButton.isSelected()) {
-                Circle circle = new Circle(event.getX(), event.getY(), 5);
-                circle.setStroke(color);
-                pane.getChildren().add(circle);
-                setMouseEvents(circle);
-            }
-            prostokatButton.setSelected(false);
-            okragButton.setSelected(false);
-            liniaButton.setSelected(false);
-        });
-
+        drawShapes(pane);
         return root;
     }
 
+    private void drawShapes(Pane pane) {
+        List<Circle> points = new ArrayList<>();
+        List<Line> lines = new ArrayList<>();
+        List<Polygon> polygons = new ArrayList<>();
 
-    private static void xButtonAction() {
+        pane.setOnMouseClicked((MouseEvent event) -> {
+            double mouseX = event.getX();
+            double mouseY = event.getY();
+
+            if (event.getButton() == MouseButton.SECONDARY && points.size() >= 3) {
+                Circle firstPoint = points.get(0);
+                Circle lastPoint = points.get(points.size() - 1);
+
+                Line closingLine = new Line(lastPoint.getCenterX(), lastPoint.getCenterY(), firstPoint.getCenterX(),
+                        firstPoint.getCenterY());
+                lines.add(closingLine);
+
+                pane.getChildren().addAll(closingLine);
+
+                Polygon polygon = new Polygon();
+                List<Circle> clonedPoints = new ArrayList<>(); // Lista punktów do wielokąta
+                for (Circle point : points) {
+                    polygon.getPoints().addAll(point.getCenterX(), point.getCenterY());
+                    Circle clonedPoint = new Circle(point.getCenterX(), point.getCenterY(), 3);
+                    clonedPoints.add(clonedPoint);
+                }
+
+                pane.getChildren().add(polygon);
+                polygons.add(polygon);
+                setPolygonDraggable(polygon, clonedPoints); // Ustawianie obsługi przesunięcia dla nowego polygonu i jego punktów
+
+                // Usunięcie punktów i linii
+                pane.getChildren().removeAll(points);
+                pane.getChildren().removeAll(lines);
+                points.clear();
+                lines.clear();
+            } else {
+                Circle point = new Circle(mouseX, mouseY, 3);
+                point.setFill(Color.RED);
+
+                pane.getChildren().add(point);
+                points.add(point);
+
+                if (points.size() > 1) {
+                    Circle previousPoint = points.get(points.size() - 2);
+                    Line line = new Line(previousPoint.getCenterX(), previousPoint.getCenterY(), mouseX, mouseY);
+                    pane.getChildren().add(line);
+                    lines.add(line);
+                }
+            }
+        });
     }
+    private void setPolygonDraggable(Polygon polygon, List<Circle> points) {
+        AtomicReference<Double> startAngle = new AtomicReference<>(0.0);
+        AtomicBoolean ctrlPressed = new AtomicBoolean(false);
 
-    private static void yButtonAction() {
-    }
-
-    private static void setMouseEvents(Shape shape) {
-        AtomicReference<Double> initialX = new AtomicReference<>((double) 0);
-        AtomicReference<Double> initialY = new AtomicReference<>((double) 0);
-        AtomicReference<Boolean> resizing = new AtomicReference<>(false);
-
-        shape.setOnMousePressed(event -> {
-            zmienRozmiarButton.setVisible(true);
+        polygon.setOnMousePressed(event -> {
             if (event.isShiftDown()) {
-                resizing.set(true);
-                initialX.set(event.getSceneX());
-                initialY.set(event.getSceneY());
+                polygon.getParent().setMouseTransparent(true);
+                startAngle.set(Math.atan2(event.getSceneY() - polygon.getBoundsInParent().getMaxY(),
+                        event.getSceneX() - polygon.getBoundsInParent().getMaxX()));
+            } else if (event.isControlDown()) {
+                polygon.getParent().setMouseTransparent(true);
+                ctrlPressed.set(true);
+                double mouseX = event.getSceneX();
+                double mouseY = event.getSceneY();
+                polygon.setUserData(new double[]{mouseX, mouseY});
             } else {
-                initialX.set(event.getSceneX() - shape.getLayoutX());
-                initialY.set(event.getSceneY() - shape.getLayoutY());
-            }
-            switch (shape) {
-                case Rectangle rectangle -> {
-                    changeVisibility(rectangle);
-                    DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                    dlugoscTextField.setText(decimalFormat.format(rectangle.getWidth()));
-                    szerokoscTextField.setText(decimalFormat.format(rectangle.getHeight()));
-                    changeSize(rectangle);
-                }
-                case Circle circle -> {
-                    changeVisibility(circle);
-                    DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                    srednicaTextField.setText(decimalFormat.format(circle.getRadius()));
-                    changeSize(circle);
-                }
-                case Line line -> {
-                    changeVisibility(line);
-                    DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                    dlugoscTextField.setText(decimalFormat.format(line.getEndX()));
-                    changeSize(line);
-                }
-                default -> throw new IllegalStateException("Unexpected value: " + shape);
+                polygon.getParent().setMouseTransparent(true);
+                double mouseX = event.getSceneX();
+                double mouseY = event.getSceneY();
+                polygon.setUserData(new double[]{mouseX, mouseY});
             }
         });
 
-        shape.setOnMouseDragged(event -> {
-            zmienRozmiarButton.setVisible(true);
-            if (resizing.get()) {
-                double currentX = event.getSceneX();
-                double currentY = event.getSceneY();
+        polygon.setOnMouseDragged(event -> {
+            if (event.isShiftDown()) {
+                double angle = Math.atan2(event.getSceneY() - polygon.getBoundsInParent().getMaxY(),
+                        event.getSceneX() - polygon.getBoundsInParent().getMaxX()) - startAngle.get();
+                polygon.setRotate(Math.toDegrees(angle));
+            } else if (ctrlPressed.get()) {
+                double mouseX = event.getSceneX();
+                double mouseY = event.getSceneY();
+                double[] lastMousePos = (double[]) polygon.getUserData();
 
-                double offsetX = currentX - initialX.get();
-                double offsetY = currentY - initialY.get();
+                double deltaX = mouseX - lastMousePos[0];
+                double deltaY = mouseY - lastMousePos[1];
 
-                switch (shape) {
-                    case Rectangle rectangle -> {
-                        changeVisibility(rectangle);
-                        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                        dlugoscTextField.setText(decimalFormat.format(rectangle.getHeight()));
-                        szerokoscTextField.setText(decimalFormat.format(rectangle.getWidth()));
-                        double newWidth = Math.max(rectangle.getWidth() + offsetX, 10);
-                        double newHeight = Math.max(rectangle.getHeight() + offsetY, 10);
-                        rectangle.setWidth(newWidth);
-                        rectangle.setHeight(newHeight);
-                    }
-                    case Circle circle -> {
-                        changeVisibility(circle);
-                        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                        srednicaTextField.setText(decimalFormat.format(circle.getRadius()));
-                        double newRadius = Math.max(circle.getRadius() + (offsetX + offsetY) / 2.0, 5);
-                        circle.setRadius(newRadius);
-                    }
-                    case Line line -> {
-                        changeVisibility(line);
-                        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                        dlugoscTextField.setText(decimalFormat.format(line.getEndX()));
-                        line.setEndX(line.getEndX() + offsetX);
-                        line.setEndY(line.getEndY() + offsetY);
-                    }
-                    default -> {
-                    }
-                }
-                initialX.set(currentX);
-                initialY.set(currentY);
+                double pivotX = polygon.getBoundsInLocal().getWidth() / 2 + polygon.getBoundsInParent().getMinX();
+                double pivotY = polygon.getBoundsInLocal().getHeight() / 2 + polygon.getBoundsInParent().getMinY();
+
+                double factorX = deltaX / polygon.getBoundsInLocal().getWidth();
+                double factorY = deltaY / polygon.getBoundsInLocal().getHeight();
+
+                polygon.setScaleX(polygon.getScaleX() * (1 + factorX));
+                polygon.setScaleY(polygon.getScaleY() * (1 + factorY));
+
+                polygon.setUserData(new double[]{mouseX, mouseY});
             } else {
-                double newX = event.getSceneX() - initialX.get();
-                double newY = event.getSceneY() - initialY.get();
-                shape.setLayoutX(newX);
-                shape.setLayoutY(newY);
+                double mouseX = event.getSceneX();
+                double mouseY = event.getSceneY();
+                double[] lastMousePos = (double[]) polygon.getUserData();
+
+                double deltaX = mouseX - lastMousePos[0];
+                double deltaY = mouseY - lastMousePos[1];
+
+                polygon.setLayoutX(polygon.getLayoutX() + deltaX);
+                polygon.setLayoutY(polygon.getLayoutY() + deltaY);
+
+                polygon.setUserData(new double[]{mouseX, mouseY});
+
+                // Aktualizacja pozycji punktów
+                for (Circle point : points) {
+                    point.setCenterX(point.getCenterX() + deltaX);
+                    point.setCenterY(point.getCenterY() + deltaY);
+                }
             }
         });
-        shape.setOnMouseReleased(event -> resizing.set(false));
-    }
 
-    private static void changeSize(Shape shape) {
-        if (shape instanceof Rectangle) {
-            zmienRozmiarButton.setOnAction(actionEvent -> {
-                ((Rectangle) shape).setHeight(Double.parseDouble(szerokoscTextField.getText().split(",")[0]));
-                ((Rectangle) shape).setWidth(Double.parseDouble(dlugoscTextField.getText().split(",")[0]));
-            });
-        } else if (shape instanceof Circle) {
-            zmienRozmiarButton.setOnAction(actionEvent -> ((Circle) shape).setRadius(Double.parseDouble(srednicaTextField.getText().split(",")[0])));
-        } else if (shape instanceof Line) {
-            zmienRozmiarButton.setOnAction(actionEvent -> ((Line) shape).setEndX(Double.parseDouble(dlugoscTextField.getText().split(",")[0])));
-        }
-    }
-
-    public static void changeVisibility(Shape shape) {
-        if (shape instanceof Rectangle) {
-            dlugoscLabel.setVisible(true);
-            dlugoscTextField.setVisible(true);
-            szerokoscLabel.setVisible(true);
-            szerokoscTextField.setVisible(true);
-            promienLabel.setVisible(false);
-            srednicaTextField.setVisible(false);
-            prostokatButton.setSelected(false);
-            liniaButton.setSelected(false);
-            okragButton.setSelected(false);
-        } else if (shape instanceof Line) {
-            dlugoscLabel.setVisible(true);
-            dlugoscTextField.setVisible(true);
-            szerokoscLabel.setVisible(false);
-            szerokoscTextField.setVisible(false);
-            promienLabel.setVisible(false);
-            srednicaTextField.setVisible(false);
-            prostokatButton.setSelected(false);
-            liniaButton.setSelected(false);
-            okragButton.setSelected(false);
-        } else if (shape instanceof Circle) {
-            dlugoscLabel.setVisible(false);
-            dlugoscTextField.setVisible(false);
-            szerokoscLabel.setVisible(false);
-            szerokoscTextField.setVisible(false);
-            promienLabel.setVisible(true);
-            srednicaTextField.setVisible(true);
-            prostokatButton.setSelected(false);
-            liniaButton.setSelected(false);
-            okragButton.setSelected(false);
-        }
+        polygon.setOnMouseReleased(event -> {
+            polygon.getParent().setMouseTransparent(false);
+            ctrlPressed.set(false);
+        });
     }
 
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
