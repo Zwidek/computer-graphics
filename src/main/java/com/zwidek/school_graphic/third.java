@@ -56,7 +56,7 @@ public class third extends Application {
     }
 
     private void drawBezier() {
-        int numberOfControlPoints = 5;
+        int numberOfControlPoints = 1;
 
         // Add text fields to VBox for each control point
         for (int i = 0; i < numberOfControlPoints; i++) {
