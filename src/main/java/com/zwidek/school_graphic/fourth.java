@@ -37,8 +37,10 @@ public class fourth extends Application {
     private static VBox vBox2;
     private static TextField wektorX;
     private static TextField wektorY;
+    private static TextField obrot;
     private static Button wektorXButton;
     private static Button wektorYButton;
+    private static Button obrotButton;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -62,6 +64,8 @@ public class fourth extends Application {
         wektorY = (TextField) root.lookup("#wektorY_textfield");
         wektorXButton = (Button) root.lookup("#wektorX_button");
         wektorYButton = (Button) root.lookup("#wektorY_button");
+        obrot = (TextField) root.lookup("#obrot_textfield");
+        obrotButton = (Button) root.lookup("#obrot_button");
 
         drawShapes(pane);
         setupEventHandlers();
@@ -72,6 +76,8 @@ public class fourth extends Application {
         wektorXButton.setOnAction(event -> {
             try {
                 double deltaX = Double.parseDouble(wektorX.getText());
+
+                // Przesuń wszystkie polygony i ich punkty X o wartość deltaX
                 for (Node node : pane.getChildren()) {
                     if (node instanceof Polygon) {
                         Polygon polygon = (Polygon) node;
@@ -81,16 +87,23 @@ public class fourth extends Application {
                         point.setCenterX(point.getCenterX() + deltaX);
                     }
                 }
+
+                // Aktualizuj informacje w VBox
                 updateVBoxInfo(getAllPoints());
             } catch (NumberFormatException e) {
-                System.out.println("Bledna liczba");
+                // Obsłuż wyjątek, np. nieprawidłowy format liczby
+                e.printStackTrace();
             }
+
+            // Dodaj to wywołanie, aby zaktualizować VBox po przesunięciu polygony
             updateVBoxInfo(getAllPoints());
         });
 
         wektorYButton.setOnAction(event -> {
             try {
                 double deltaY = Double.parseDouble(wektorY.getText());
+
+                // Przesuń wszystkie polygony i ich punkty Y o wartość deltaY
                 for (Node node : pane.getChildren()) {
                     if (node instanceof Polygon) {
                         Polygon polygon = (Polygon) node;
@@ -100,10 +113,38 @@ public class fourth extends Application {
                         point.setCenterY(point.getCenterY() + deltaY);
                     }
                 }
+
+                // Aktualizuj informacje w VBox
                 updateVBoxInfo(getAllPoints());
             } catch (NumberFormatException e) {
-                System.out.println("Błędna liczba");
+                // Obsłuż wyjątek, np. nieprawidłowy format liczby
+                e.printStackTrace();
             }
+
+            // Dodaj to wywołanie, aby zaktualizować VBox po przesunięciu polygony
+            updateVBoxInfo(getAllPoints());
+        });
+
+        obrotButton.setOnAction(event -> {
+            try {
+                double rotationAngle = Double.parseDouble(obrot.getText());
+
+                // Obróć wszystkie polygony o wartość rotationAngle
+                for (Node node : pane.getChildren()) {
+                    if (node instanceof Polygon) {
+                        Polygon polygon = (Polygon) node;
+                        polygon.setRotate(polygon.getRotate() + rotationAngle);
+                    }
+                }
+
+                // Aktualizuj informacje w VBox
+                updateVBoxInfo(getAllPoints());
+            } catch (NumberFormatException e) {
+                // Obsłuż wyjątek, np. nieprawidłowy format liczby
+                e.printStackTrace();
+            }
+
+            // Dodaj to wywołanie, aby zaktualizować VBox po obróceniu polygony
             updateVBoxInfo(getAllPoints());
         });
     }
