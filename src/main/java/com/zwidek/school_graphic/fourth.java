@@ -1,5 +1,8 @@
 package com.zwidek.school_graphic;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.type.TypeReference;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -19,12 +22,20 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class fourth extends Application {
     private static BorderPane borderPane;
@@ -41,6 +52,11 @@ public class fourth extends Application {
     private static Button obrotButton;
     private static Button szerokoscButton;
     private static Button wysokoscButton;
+    private static Button serializacja;
+    private static Button deserializacja;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static List<Polygon> polygonListToSerialize = new ArrayList<>();
+
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -70,13 +86,67 @@ public class fourth extends Application {
         obrotButton = (Button) root.lookup("#obrot_button");
         wysokoscButton = (Button) root.lookup("#wysokosc_button");
         szerokoscButton = (Button) root.lookup("#szerokosc_button");
+        serializacja = (Button) root.lookup("#serializacja");
+        deserializacja = (Button) root.lookup("#deserializacja");
 
         drawShapes(pane);
         setupEventHandlers();
         return root;
     }
 
+    private void serializePolygonsToJson() throws IOException {
+        if (!polygonListToSerialize.isEmpty()) {
+            pane.getChildren().clear();
+        }
+    }
+
+    private void deserializePolygonsToJson() throws IOException {
+        File file = new File("C:\\Users\\zwide\\Desktop\\Nowy folder\\test.json");
+        if (file.exists()) {
+            FileReader fileReader
+                    = new FileReader(
+                    "C:\\Users\\zwide\\Desktop\\Nowy folder\\test.json");
+
+            BufferedReader buffReader
+                    = new BufferedReader(
+                    fileReader);
+
+            String line = null;
+            while (buffReader.ready()) {
+                line = buffReader.readLine();
+            }
+            String result = line.replaceAll("[^0-9.]+", " ");
+            System.out.println(result);
+
+            String[] split = result.split(" ");
+
+            Polygon polygon = new Polygon();
+
+            for (int i = 1; i < split.length; i++) {
+                double x = Double.parseDouble(split[i]);
+                polygon.getPoints().addAll(x);
+            }
+
+            pane.getChildren().add(polygon);
+        }
+    }
+
     private void setupEventHandlers() {
+        deserializacja.setOnAction(event -> {
+            try {
+                deserializePolygonsToJson();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        serializacja.setOnAction(event -> {
+            try {
+                serializePolygonsToJson();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         wektorXButton.setOnAction(event -> {
             try {
                 double deltaX = Double.parseDouble(wektorXTextfield.getText());
@@ -205,6 +275,12 @@ public class fourth extends Application {
 
                 pane.getChildren().add(polygon);
                 polygons.add(polygon);
+                polygonListToSerialize.add(polygon);
+                try {
+                    objectMapper.writeValue(new File("C:\\Users\\zwide\\Desktop\\Nowy folder\\test.json"), polygon.getPoints().toString());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 setPolygonDraggable(polygon, clonedPoints);
 
                 pane.getChildren().removeAll(points);

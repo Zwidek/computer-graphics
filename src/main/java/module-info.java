@@ -9,6 +9,7 @@ module com.zwidek.school_graphic {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
+    requires com.fasterxml.jackson.databind;
 
     opens com.zwidek.school_graphic to javafx.fxml;
     exports com.zwidek.school_graphic;

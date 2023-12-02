@@ -1,98 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<BorderPane fx:id="border_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="border_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <center>
-        <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
+        <Pane fx:id="pane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
     </center>
     <left>
-        <VBox fx:id="vbox" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER"/>
+        <VBox fx:id="vbox" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
     </left>
     <right>
         <VBox fx:id="vbox2" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-            <Label fx:id="dlugosc_label" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="WEKTOR X"
-                   textAlignment="CENTER" textFill="#343aff">
+            <Label fx:id="dlugosc_label" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="WEKTOR X" textAlignment="CENTER" textFill="#343aff">
                 <opaqueInsets>
-                    <Insets/>
+                    <Insets />
                 </opaqueInsets>
                 <VBox.margin>
-                    <Insets top="5.0"/>
+                    <Insets top="5.0" />
                 </VBox.margin>
                 <font>
-                    <Font name="System Bold Italic" size="12.0"/>
+                    <Font name="System Bold Italic" size="12.0" />
                 </font>
             </Label>
-            <TextField fx:id="wektorX_textfield"/>
-            <Button fx:id="wektorX_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0"
-                    prefWidth="106.0" style="-fx-background-color: GOLD;" text="PRZESUŃ"/>
-            <Label fx:id="dlugosc_label2" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="WEKTOR Y"
-                   textAlignment="CENTER" textFill="#343aff">
+            <TextField fx:id="wektorX_textfield" />
+            <Button fx:id="wektorX_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="PRZESUŃ" />
+            <Label fx:id="dlugosc_label2" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="WEKTOR Y" textAlignment="CENTER" textFill="#343aff">
                 <opaqueInsets>
-                    <Insets/>
+                    <Insets />
                 </opaqueInsets>
                 <VBox.margin>
-                    <Insets top="5.0"/>
+                    <Insets top="5.0" />
                 </VBox.margin>
                 <font>
-                    <Font name="System Bold Italic" size="12.0"/>
+                    <Font name="System Bold Italic" size="12.0" />
                 </font>
             </Label>
-            <TextField fx:id="wektorY_textfield"/>
-            <Button fx:id="wektorY_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0"
-                    prefWidth="106.0" style="-fx-background-color: GOLD;" text="PRZESUŃ"/>
-            <Label fx:id="dlugosc_label3" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="OBRÓT"
-                   textAlignment="CENTER" textFill="#343aff">
+            <TextField fx:id="wektorY_textfield" />
+            <Button fx:id="wektorY_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="PRZESUŃ" />
+            <Label fx:id="dlugosc_label3" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="OBRÓT" textAlignment="CENTER" textFill="#343aff">
                 <opaqueInsets>
-                    <Insets/>
+                    <Insets />
                 </opaqueInsets>
                 <VBox.margin>
-                    <Insets top="5.0"/>
+                    <Insets top="5.0" />
                 </VBox.margin>
                 <font>
-                    <Font name="System Bold Italic" size="12.0"/>
+                    <Font name="System Bold Italic" size="12.0" />
                 </font>
             </Label>
-            <TextField fx:id="obrot_textfield"/>
-            <Button fx:id="obrot_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0"
-                    prefWidth="106.0" style="-fx-background-color: GOLD;" text="OBRÓT"/>
-            <Label fx:id="dlugosc_label4" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="SZEROKOŚC"
-                   textAlignment="CENTER" textFill="#343aff">
+            <TextField fx:id="obrot_textfield" />
+            <Button fx:id="obrot_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="OBRÓT" />
+            <Label fx:id="dlugosc_label4" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="SZEROKOŚC" textAlignment="CENTER" textFill="#343aff">
                 <opaqueInsets>
-                    <Insets/>
+                    <Insets />
                 </opaqueInsets>
                 <VBox.margin>
-                    <Insets top="5.0"/>
+                    <Insets top="5.0" />
                 </VBox.margin>
                 <font>
-                    <Font name="System Bold Italic" size="12.0"/>
+                    <Font name="System Bold Italic" size="12.0" />
                 </font>
             </Label>
-            <TextField fx:id="szerokosc_textfield"/>
-            <Button fx:id="szerokosc_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0"
-                    prefWidth="106.0" style="-fx-background-color: GOLD;" text="ZMIANA"/>
-            <Label fx:id="dlugosc_label5" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="WYSOKOŚĆ"
-                   textAlignment="CENTER" textFill="#343aff">
+            <TextField fx:id="szerokosc_textfield" />
+            <Button fx:id="szerokosc_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="ZMIANA" />
+            <Label fx:id="dlugosc_label5" alignment="CENTER" prefHeight="27.0" prefWidth="100.0" text="WYSOKOŚĆ" textAlignment="CENTER" textFill="#343aff">
                 <opaqueInsets>
-                    <Insets/>
+                    <Insets />
                 </opaqueInsets>
                 <VBox.margin>
-                    <Insets top="5.0"/>
+                    <Insets top="5.0" />
                 </VBox.margin>
                 <font>
-                    <Font name="System Bold Italic" size="12.0"/>
+                    <Font name="System Bold Italic" size="12.0" />
                 </font>
             </Label>
-            <TextField fx:id="wysokosc_textfield"/>
-            <Button fx:id="wysokosc_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0"
-                    prefWidth="106.0" style="-fx-background-color: GOLD;" text="ZMIANA"/>
+            <TextField fx:id="wysokosc_textfield" />
+            <Button fx:id="wysokosc_button" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="106.0" style="-fx-background-color: GOLD;" text="ZMIANA" />
         </VBox>
     </right>
+   <top>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+       <Button fx:id="serializacja"  layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0"
+               prefWidth="106.0" style="-fx-background-color: GOLD;" text="serializacja"/>
+       <Button fx:id="deserializacja" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" prefHeight="26.0"
+               prefWidth="106.0" style="-fx-background-color: GOLD; -fx-start-margin: 100" text="deserializacja"/>
+      </HBox>
+   </top>
 </BorderPane>
